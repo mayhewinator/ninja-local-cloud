@@ -113,7 +113,7 @@ namespace NinjaFileIO
 			{
 #ifdef _WINDOWS
 				FILE *stream = NULL;
-				if(_wfopen_s(&stream, filename.c_str(), L"w") != 0)
+				if(_wfopen_s(&stream, filename.c_str(), L"wb") != 0)
 					stream = NULL;
 				if(stream != NULL)
 				{
