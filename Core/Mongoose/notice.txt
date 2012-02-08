@@ -1,0 +1,4 @@
+/* <notice>
+ Code from http://code.google.com/p/mongoose/<br/>
+ License http://www.opensource.org/licenses/mit-license.php<br/>
+ </notice> */
