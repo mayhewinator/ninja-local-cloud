@@ -123,11 +123,10 @@ namespace NinjaFileIO
 					fclose(stream);
 				}
 #else	// MAC
-				NSString *fileStr = [NSString stringWithUTF8String:fileContents],
-							*filePath = NinjaUtilities::WStringToNSString(filename);
-				if([fileStr writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:nil] == YES)
+				NSString *filePath = NinjaUtilities::WStringToNSString(filename);
+				NSData *data = [NSData dataWithBytes: fileContents length:contentLength];
+				if([data writeToFile:filePath atomically:YES] == YES)
 					ret = true;
-				
 				[filePath release];
 #endif
 			}
