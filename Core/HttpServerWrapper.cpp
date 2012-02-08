@@ -120,7 +120,7 @@ struct HttpResponseData
 
         sstr << "Access-Control-Allow-Origin: " << origin << "\r\n";
         sstr << "Access-Control-Allow-Methods: POST, GET, DELETE, PUT\r\n";
-        sstr << "Access-Control-Allow-Headers: sourceURI, overwrite-destination, check-existence-only, recursive, return-type, operation, delete-source, file-filters, if-modified-since, get-file-info\r\n";
+        sstr << "Access-Control-Allow-Headers: Content-Type, sourceURI, overwrite-destination, check-existence-only, recursive, return-type, operation, delete-source, file-filters, if-modified-since, get-file-info\r\n";
         sstr << "Access-Control-Max-Age: 1728000\r\n";
         
         char timeBuffer[100];
