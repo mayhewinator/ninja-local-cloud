@@ -27,12 +27,6 @@
     <None Include="res\NinjaCloudSimulator.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\icon1.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\folderPicker.ico">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="res\FolderBrowserIcon.bmp">
       <Filter>Resource Files</Filter>
     </None>
