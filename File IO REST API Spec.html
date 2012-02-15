@@ -1,0 +1,785 @@
+<html>
+<head><title>Ninja File IO Rest API Documentation.doc</title>
+    <style type="text/css">@import url('https://themes.googleusercontent.com/fonts/css?kit=MSSLfUayeNh9PW3ng9UWrirlBcGJ7N4dBtR9TI-y1vHA6mILqzkelCs0stqH5so2');
+
+    ol {
+        margin: 0;
+        padding: 0
+    }
+
+    p {
+        margin: 0
+    }
+
+    .c5 {
+        vertical-align: top;
+        width: 108.9pt;
+        border-style: solid;
+        border-color: #000000;
+        border-width: 1pt;
+        padding: 0pt 5.4pt 0pt 5.4pt
+    }
+
+    .c12 {
+        vertical-align: top;
+        width: 447.8pt;
+        border-style: solid;
+        border-color: #000000;
+        border-width: 1pt;
+        padding: 0pt 5.4pt 0pt 5.4pt
+    }
+
+    .c4 {
+        vertical-align: top;
+        width: 106.8pt;
+        border-style: solid;
+        border-color: #000000;
+        border-width: 1pt;
+        padding: 0pt 5.4pt 0pt 5.4pt
+    }
+
+    .c7 {
+        vertical-align: top;
+        width: 445.5pt;
+        border-style: solid;
+        border-color: #000000;
+        border-width: 1pt;
+        padding: 0pt 5.4pt 0pt 5.4pt
+    }
+
+    .c6 {
+        vertical-align: top;
+        width: 445.7pt;
+        border-style: solid;
+        border-color: #000000;
+        border-width: 1pt;
+        padding: 0pt 5.4pt 0pt 5.4pt
+    }
+
+    .c0 {
+        line-height: 1.0;
+        direction: ltr;
+        padding-bottom: 0pt
+    }
+
+    .c18 {
+        font-size: 9pt;
+        font-family: Arial
+    }
+
+    .c17 {
+        max-width: 648pt;
+        padding: 72pt 72pt 72pt 72pt
+    }
+
+    .c14 {
+        font-size: 9pt;
+        font-family: Consolas
+    }
+
+    .c1 {
+        direction: ltr;
+        padding-bottom: 0pt
+    }
+
+    .c8 {
+        height: 0pt
+    }
+
+    .c11 {
+        height: 11pt
+    }
+
+    .c16 {
+        font-size: 16pt
+    }
+
+    .c3 {
+        text-decoration: underline
+    }
+
+    .c2 {
+        direction: ltr
+    }
+
+    .c13 {
+        background-color: #ffffff
+    }
+
+    .c15 {
+        border-collapse: collapse
+    }
+
+    .c9 {
+        margin-left: 36pt
+    }
+
+    .c10 {
+        font-style: italic
+    }
+
+    .title {
+        padding-top: 24pt;
+        line-height: 1.15;
+        text-align: left;
+        color: #000000;
+        font-size: 36pt;
+        font-family: Calibri;
+        font-weight: bold;
+        padding-bottom: 6pt
+    }
+
+    .subtitle {
+        padding-top: 18pt;
+        line-height: 1.15;
+        text-align: left;
+        color: #666666;
+        font-style: italic;
+        font-size: 24pt;
+        font-family: Georgia;
+        padding-bottom: 4pt
+    }
+
+    body {
+        color: #000000;
+        font-size: 11pt;
+        font-family: Calibri
+    }
+
+    h1 {
+        padding-top: 12pt;
+        line-height: 1.15;
+        text-align: left;
+        color: #000000;
+        font-size: 16pt;
+        font-family: Cambria;
+        font-weight: bold;
+        padding-bottom: 3pt
+    }
+
+    h2 {
+        padding-top: 12pt;
+        line-height: 1.15;
+        text-align: left;
+        color: #000000;
+        font-style: italic;
+        font-size: 14pt;
+        font-family: Cambria;
+        font-weight: bold;
+        padding-bottom: 3pt
+    }
+
+    h3 {
+        padding-top: 12pt;
+        line-height: 1.15;
+        text-align: left;
+        color: #000000;
+        font-size: 13pt;
+        font-family: Cambria;
+        font-weight: bold;
+        padding-bottom: 3pt
+    }
+
+    h4 {
+        padding-top: 12pt;
+        line-height: 1.15;
+        text-align: left;
+        color: #000000;
+        font-size: 14pt;
+        font-family: Calibri;
+        font-weight: bold;
+        padding-bottom: 3pt
+    }
+
+    h5 {
+        padding-top: 12pt;
+        line-height: 1.15;
+        text-align: left;
+        color: #000000;
+        font-style: italic;
+        font-size: 13pt;
+        font-family: Calibri;
+        font-weight: bold;
+        padding-bottom: 3pt
+    }
+
+    h6 {
+        padding-top: 12pt;
+        line-height: 1.15;
+        text-align: left;
+        color: #000000;
+        font-size: 11pt;
+        font-family: Calibri;
+        font-weight: bold;
+        padding-bottom: 3pt
+    }</style>
+</head>
+<body class="c13 c17"><h1 class="c2"><span>Cloud Status API</span></h1>
+
+<p class="c1"><span>In order to determine if the ninja cloud is running for a particular server (local or remote), you can call</span>
+</p>
+
+<p class="c1"><span>http://&lt;the server url&gt;/cloudstatus</span></p>
+
+<p class="c1"><span>if the cloud server is up &nbsp;and running it will return status code 200 and a json string as follows:</span>
+</p>
+
+<p class="c1"><span class="c13 c14">{&quot;name&quot;:&quot;Ninja Local Cloud&quot;,&quot;status&quot;: &quot;running&quot;,&quot;server-root&quot;:&quot;C:/Users/vpn847/Documents/Ninja Projects&quot;,&quot;version&quot;:&quot;0.5.0.0&quot;}</span>
+</p>
+
+<p class="c1 c11"><span></span></p>
+
+<p class="c1"><span>The cloud name provides a user facing name for the particular cloud server.</span></p>
+
+<h1 class="c2"><span>File APIs</span></h1>
+
+<p class="c2"><span>These APIs deal with single files. The shell will be limited to acting on files in paths the user has permissions to read/write.</span>
+</p>
+
+<h3 class="c2"><span>Create a new file</span></h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>URL</span></p></td>
+        <td class="c12"><p class="c2"><span>http://someURL.com/file/&lt;filepath&gt;/&lt;filename &gt;</span></p>
+
+            <p class="c2"><span>e.g. </span></p>
+
+            <p class="c2">
+                <span>http://someURL.com/file</span><span>/c/users/jdoe/my%20documents/foo.html<br></span><span>http://someURL.com/file</span><span>/users/jdoe/documents/foo.html<br>NOTE: all file paths are case sensitive</span>
+            </p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Method</span></p></td>
+        <td class="c12"><p class="c2"><span>POST</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Request Headers</span></p></td>
+        <td class="c12"><p class="c2"><span>none</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Request Body</span></p></td>
+        <td class="c12"><p class="c2"><span class="c3">Optional</span><span><br>Raw file contents with the appropriate content-type.<br>If the body is empty, the file will be created with no content.</span>
+        </p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Response headers</span></p></td>
+        <td class="c12"><p class="c2"><span>Cache-Control: no-cache</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Response body</span></p></td>
+        <td class="c12"><p class="c2"><span>none</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Return Status Codes</span></p></td>
+        <td class="c12"><p class="c2"><span>201 &ldquo;Created&rdquo; &ndash;
+            File was created<br>400 &ldquo;Bad Request&rdquo; &ndash; the file was not able to be created because it exists already.<br>500 &ldquo;Internal Server Error&rdquo; &ndash;
+            the file was not able to be created.</span></p></td>
+    </tr>
+    </tbody>
+</table>
+<h3 class="c2"><span>Update an existing file (save over existing file)</span></h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>URL</span></p></td>
+        <td class="c6"><p class="c2">
+            <span>http://someURL.com/file</span><span>/&lt;filepath&gt;/&lt;filename &gt;</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Method</span></p></td>
+        <td class="c6"><p class="c2"><span>PUT</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Headers</span></p></td>
+        <td class="c6"><p class="c2"><span>none</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Body</span></p></td>
+        <td class="c6"><p class="c2"><span>Raw file contents with the appropriate content-type.</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Headers</span></p></td>
+        <td class="c6"><p class="c2"><span>Cache-Control: no-cache</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Body</span></p></td>
+        <td class="c6"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><a href="#" name="id.edf4c7030e42"></a><span>Returns Status Codes</span></p></td>
+        <td class="c6"><p class="c2"><span>204 &ldquo;No Content&rdquo; &ndash;
+            File was saved<br>404 &ldquo;Not found&rdquo; &ndash;
+            the file at the indicated URI does not exist.<br>500 &ldquo;Internal Server Error&rdquo; &ndash; the file was not able to be saved.</span>
+        </p></td>
+    </tr>
+    </tbody>
+</table>
+<h3 class="c2"><span>Copy, Move of an existing file </span></h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>URL</span></p></td>
+        <td class="c6"><p class="c2">
+            <span>http://someURL.com/file</span><span>/&lt;filepath&gt;/&lt;filename &gt;</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Method</span></p></td>
+        <td class="c6"><p class="c2"><span>PUT</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Headers</span></p></td>
+        <td class="c6"><p class="c2"><span class="c3">Required</span><span><br></span><span class="c10">sourceURI</span><span><br>value= &lt;source file path in same format as in the URL&gt;<br>e.g. c/users/jdoe/my%20documents/foo.html</span>
+        </p>
+
+            <p class="c2"><span class="c3">Optional</span><span><br></span><span
+                    class="c10">overwrite-destination</span><span><br>value=true/false<br>default=false<br>true indicates that it is safe to overwrite the destination file if it exists</span>
+            </p>
+
+            <p class="c2"><span class="c10">delete-source<br></span><span>value: true/false<br>default: false<br>true means to remove he source after the copy operation succeeds.</span>
+            </p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Body</span></p></td>
+        <td class="c6"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Headers</span></p></td>
+        <td class="c6"><p class="c2"><span>Cache-Control: no-cache</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Body</span></p></td>
+        <td class="c6"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Return Status Codes</span></p></td>
+        <td class="c6"><p class="c2"><span>204 &ldquo;No Content&rdquo; &ndash; The operation succeeded<br>404 &ldquo;Not found&rdquo; &ndash;
+            the source file at the indicated URI does not exist.<br>500 &ldquo;Internal Server Error&rdquo; &ndash; the file operation was not able to be completed.</span>
+        </p></td>
+    </tr>
+    </tbody>
+</table>
+<h3 class="c2"><span>Delete an existing file</span></h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>URL</span></p></td>
+        <td class="c7"><p class="c2">
+            <span>http://someURL.com/file</span><span>/&lt;filepath&gt;/&lt;filename &gt;</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Method</span></p></td>
+        <td class="c7"><p class="c2"><span>DELETE</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Headers</span></p></td>
+        <td class="c7"><p class="c2"><span>none</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Body</span></p></td>
+        <td class="c7"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Headers</span></p></td>
+        <td class="c7"><p class="c2"><span>Cache-Control: no-cache</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Body</span></p></td>
+        <td class="c7"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Return Status Codes</span></p></td>
+        <td class="c7"><p class="c2"><span>204 &ldquo;No Content&rdquo; &ndash;
+            File was successfully removed<br>404 &ldquo;Not found&rdquo; &ndash; the file at the indicated URI does not exist.<br>500 &ldquo;Internal Server Error&rdquo; &ndash;
+            the file was not able to be deleted.</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Notes</span></p></td>
+        <td class="c7"><p class="c2"><span>This will only delete a single file. You cannot pass wildcard characters in the path.</span>
+        </p></td>
+    </tr>
+    </tbody>
+</table>
+<h3 class="c2"><span>Read an existing file</span></h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>URL</span></p></td>
+        <td class="c7"><p class="c2">
+            <span>http://someURL.com/file</span><span>/&lt;filepath&gt;/&lt;filename &gt;</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Method</span></p></td>
+        <td class="c7"><p class="c2"><span>GET</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Headers</span></p></td>
+        <td class="c7"><p class="c2"><span class="c10">check-existence-only<br></span><span>value=true/false<br>default none<br>if true, no content is returned. The return status code indicates if the directory exists or not.</span>
+        </p>
+
+            <p class="c2"><span class="c13 c10">If-modified-since</span><span class="c13"><br>value=&lt;ms since 1/1/1970 in GMT&gt;. If this header is present, the server will determine if the file has been modified since the time specified. If the modified date is later than the value of &ldquo;if-modified-since&rdquo;, then the server will return 200. If not 304 is returned. check-existence-only is ignored when this header is specified.</span>
+            </p>
+
+            <p class="c2"><span class="c10">get-file-info</span><span><br>If specified, this will cause this api to return a JSON string containing the creation and modification times in ms since 1/1/1970, the file size in bytes and a boolean indicating if the file is read only.</span>
+            </p>
+
+            <p class="c2"><span>Example,</span></p>
+
+            <p class="c2"><span>{<br> &nbsp; &nbsp;&quot;creationDate&quot;: &quot;2133456525488&quot;,<br> &nbsp; &nbsp;&quot;modifiedDate&quot;: &quot;2133456525488&quot;,<br> &nbsp; &nbsp;&quot;size&quot;: &quot;2125&quot;,<br> &nbsp; &nbsp;&quot;readOnly&quot;: &quot;true&quot;<br>}</span>
+            </p>
+
+            <p class="c2"><span>All three of the above headers are mutually exclusive. Only one can be specified at a time.</span>
+            </p>
+
+            <p class="c11 c2"><span></span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Body</span></p></td>
+        <td class="c7"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Headers</span></p></td>
+        <td class="c7"><p class="c2"><span>Content-Type: &lt;string&gt;</span></p>
+
+            <p class="c2"><span>Cache-Control: no-cache</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Body</span></p></td>
+        <td class="c7"><p class="c2"><span>Raw file data</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Return Status Codes</span></p></td>
+        <td class="c7"><p class="c2"><span>200 &ldquo;OK&rdquo; &ndash; The file exists and was successfully read and the contents returned with the content type. </span><span>When a time is specified with the &ldquo;if-modified-since&rdquo;
+            header and a file was modified after that date, a return of 200 indicates that there was a change. <br></span><span><br>204 &ldquo;No Content&rdquo; &ndash;
+            The file exists and no content was returned because the &ldquo;check-existence-only&rdquo; or </span><span>&ldquo;get-file-info&rdquo; </span><span>header was set to true. 304 &ldquo;Not modified&rdquo;
+            - returned when a </span><span>file </span><span>modification check was made and </span><span>the file was not</span><span>&nbsp;modified after the time specified in the &ldquo;if-modified-since&rdquo;
+            header.</span><span><br></span><span><br>404 &ldquo;Not found&rdquo; &ndash; the file at the indicated URI does not exist.</span>
+        </p></td>
+    </tr>
+    </tbody>
+</table>
+<p class="c2 c11"><span></span></p>
+
+<p class="c11 c2"><span></span></p>
+<hr style="page-break-before:always;display:none;">
+<h1 class="c2"><span>Directory APIs</span></h1>
+
+<p class="c2"><span>These APIs operate on directories. The path parameter must be to a directory and not a specific file. The path parameter cannot contain wildcard characters.</span>
+</p>
+
+<h3 class="c2"><span>Create a new directory</span></h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>URL</span></p></td>
+        <td class="c12"><p class="c2"><span>http://someURL.com/directory</span><span>/&lt;directory path&gt;</span></p>
+        </td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Method</span></p></td>
+        <td class="c12"><p class="c2"><span>POST</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Request Headers</span></p></td>
+        <td class="c12"><p class="c2"><span>none</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Request Body</span></p></td>
+        <td class="c12"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Response headers</span></p></td>
+        <td class="c12"><p class="c2"><span>Cache-Control: no-cache</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Response body</span></p></td>
+        <td class="c12"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Return Status Codes</span></p></td>
+        <td class="c12"><p class="c2"><span>201 &ldquo;Created&rdquo; &ndash; The directory was created<br>400 &ldquo;Bad Request&rdquo; &ndash;
+            the directory was not able to be created.</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c4"><p class="c2"><span>Notes:</span></p></td>
+        <td class="c12"><p class="c2"><span>This will create the entire path. E.g. passing c:\foo\bar where there is no existing c:\foo directory will cause a directory &ldquo;foo&rdquo;
+            to be created under c:\ as well as a subdirectory named &ldquo;bar&rdquo; under &ldquo;foo&rdquo;. </span>
+        </p></td>
+    </tr>
+    </tbody>
+</table>
+<p class="c11 c2"><span></span></p>
+
+<h3 class="c2"><span>Delete an existing directory</span></h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>URL</span></p></td>
+        <td class="c7"><p class="c2"><span>http://someURL.com/directory</span><span>/&lt;directory path&gt;</span></p>
+        </td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Method</span></p></td>
+        <td class="c7"><p class="c2"><span>DELETE</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Headers</span></p></td>
+        <td class="c7"><p class="c2"><span>none</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Body</span></p></td>
+        <td class="c7"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Headers</span></p></td>
+        <td class="c7"><p class="c2"><span>Cache-Control: no-cache</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Body</span></p></td>
+        <td class="c7"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Return Status Codes</span></p></td>
+        <td class="c7"><p class="c2"><span>204 &ldquo;No Content&rdquo; &ndash;
+            The directory was successfully removed<br>404 &ldquo;Not found&rdquo; &ndash; the directory at the indicated URI does not exist.<br>500 &ldquo;Internal Server Error&rdquo; &ndash;
+            the directory was not able to be deleted.</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Notes</span></p></td>
+        <td class="c7"><p class="c11 c2"><span></span></p></td>
+    </tr>
+    </tbody>
+</table>
+<p class="c11 c2"><span></span></p>
+
+<h3 class="c2"><span>List the contents of an existing directory</span></h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>URL</span></p></td>
+        <td class="c7"><p class="c2"><span>http://someURL.com/directory</span><span>/&lt;directory path&gt;</span></p>
+        </td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Method</span></p></td>
+        <td class="c7"><p class="c2"><span>GET</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Headers</span></p></td>
+        <td class="c7"><p class="c2"><span class="c3">Required</span></p>
+
+            <p class="c2"><span class="c10">recursive</span><span><br>value=true/false<br>default=false<br>if set to true this call will get the contents of every sub-directory recursively, except if return-type is set to &ldquo;files&rdquo;, then only the files in the top level directory are returned.<br><br>file-filters<br>specifies the filters to use for files that are returned. Only those matching one of the filters listed will be returned. The default is an empty string meaning all files are returned. Do not include * as an filter. To not filter by extension either do not set this header or pass an empty string.<br>value=&lt;semi-colon delimited filter list&gt;<br>e.g. &ldquo;xml;html&rdquo;<br><br>return-type<br>value=&rdquo;directories&rdquo;, &ldquo;files&rdquo;, &ldquo;all&rdquo;<br>default=&rdquo;all&rdquo;<br>&ldquo;directories&rdquo; &ndash;
+                only subdirectories of the URI will be returned<br>&ldquo;files&rdquo; &ndash; only files within the directory will be returned<br>&ldquo;all&rdquo; &ndash;
+                both subdirectories and files will be returned<br><br></span><span class="c10">check-existence-only<br></span><span>value=true/false<br>default false<br>if true, no content is returned. The return status code indicates if the directory exists or not. &ldquo;recursive&rdquo;
+                and &ldquo;return-type&rdquo; are ignored if this header is set to true.</span></p>
+
+            <p class="c2"><span class="c13 c10">If-modified-since</span><span class="c13"><br>value=&lt;ms since 1/1/1970 in GMT&gt;. If this header is present, the server will compare the modification times of the folder AND its contents (recursively if &ldquo;recursive&rdquo;
+                is true) against the specified date. If any folder/file has a modified date later than the value of &ldquo;if-modified-since&rdquo;, then the server will return 200. If no file/folder was modified after that time then 304 is returned. check-existence-only is ignored when this header is specified.</span>
+            </p>
+
+            <p class="c2"><span>NOTE: If the path is empty, then all parameters are ignored and the API returns all top level disks and or folders available to the user.</span>
+            </p>
+
+            <p class="c2"><span>TBD for cloud: may need to include credentials and user account info</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Body</span></p></td>
+        <td class="c7"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Headers</span></p></td>
+        <td class="c7"><p class="c2"><span>Content-Type: </span><span class="c18">application/json</span></p>
+
+            <p class="c2"><span>Cache-Control: no-cache</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Body</span></p></td>
+        <td class="c7"><p class="c0"><span>JSON listing the directory contents. </span></p>
+
+            <p class="c0"><span>Example:</span></p>
+
+            <p class="c0"><span>the json below represents the response for a listing of the &ldquo;c:/my documents&rdquo;
+                directory</span></p>
+
+            <p class="c0"><span>The type property of the object can be used to differentiate between files and directories. Both files and directories also contain a name, uri property</span><span>&nbsp;as well as a creationDate and modifiedDate. The dates are all in milliseconds since UNIX epoch. </span><span>Directories also contain a children property. If the children property is an empty array it means that the directory has no contents. If the children property is defined but null, that means the directory does have content but that content has not yet been retrieved. Another XHR must be called to obtain its contents. If the children property is an array with a size &gt; 0, then it contains the contents of the directory.</span>
+            </p>
+
+            <p class="c0 c11"><span></span></p>
+
+            <p class="c0"><span>{</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp;&quot;type&quot;: &ldquo;directory&rdquo;,</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp;&quot;name&quot;: &quot;my documents&quot;,</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp;&quot;uri&quot;: &quot;c:/my documents/&quot;,</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp;&quot;children&quot;:[</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; {</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;type&quot;: &ldquo;directory&rdquo;,</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;name&quot;:&quot;subDirectory&quot;,</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;uri&quot;:&quot;c:/my documents/subDirectory&quot;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;creationDate&rdquo;:&rdquo;2133456525488&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;modifiedDate&rdquo;:&rdquo;2133456525488&rdquo;,<br> &nbsp; &nbsp; &nbsp; &nbsp; &ldquo;size&rdquo;:&rdquo;21335&rdquo;,<br> &nbsp; &nbsp; &nbsp; &nbsp; &ldquo;writable&rdquo;:&rdquo;true&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;children&quot;:[</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {</span></p>
+
+            <p class="c0 c9"><span>&quot;type&quot;: &ldquo;directory&rdquo;</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;name&quot;:&quot;anotherDir&quot;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;uri&quot;:&quot;c:/my documents/subDirectory/anotherDir&quot;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;size&rdquo;:&rdquo;33225&rdquo;,<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &ldquo;writable&rdquo;:&rdquo;true&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;children&quot;:null</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; },</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;type&quot;: &ldquo;directory&rdquo;,</span>
+            </p>
+
+            <p class="c0 c9"><span>&quot;name&quot;:&quot;anEmptySubdirectory&quot;,</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;uri&quot;:&quot;c:/my documents/subDirectory/anEmptySubdirectory&quot;</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;creationDate&rdquo;:&rdquo;2133456525488&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;modifiedDate&rdquo;:&rdquo;2133456525488&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;size&rdquo;:&rdquo;2125&rdquo;,<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &ldquo;writable&rdquo;:&rdquo;true&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; },</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;type&quot;: &ldquo;file&rdquo;,</span>
+            </p>
+
+            <p class="c0 c9"><span>&quot;name&quot;:&quot;aFile.txt&quot;,</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;uri&quot;:&quot;c:/my documents/subDirectory/aFile.txt&quot;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;creationDate&rdquo;:&rdquo;2133456525488&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;modifiedDate&rdquo;:&rdquo;2133456525488&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;size&rdquo;:&rdquo;2125&rdquo;,<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &ldquo;writable&rdquo;:&rdquo;true&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;]</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; },</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; {</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;type&rdquo;:&quot;file&quot;,</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;name&quot;:&quot;someFile.html&quot;,</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&quot;uri&quot;:&quot;c:/my documents/someFile.html&quot;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;creationDate&rdquo;:&rdquo;2133456525488&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&ldquo;modifiedDate&rdquo;:&rdquo;2133456525488&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &ldquo;size&rdquo;:&rdquo;6652&rdquo;,<br> &nbsp; &nbsp; &nbsp; &nbsp; &ldquo;writable&rdquo;:&rdquo;false&rdquo;,</span>
+            </p>
+
+            <p class="c0"><span>&nbsp; &nbsp; &nbsp; }</span></p>
+
+            <p class="c0"><span>&nbsp; &nbsp;]</span></p>
+
+            <p class="c0"><span>}</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Return Status Codes</span></p></td>
+        <td class="c7"><p class="c2"><span>200 &ldquo;OK&rdquo; &ndash; The directory exists and its contents were successfully read and the returned in the response body. </span><span>When a time is specified with the &ldquo;if-modified-since&rdquo;
+            header and a file/folder was modified after that date, a return of 200 indicates that there was a change.</span><span><br>204 &ldquo;No Content&rdquo; &ndash;
+            The directory exists and no content was returned because the &ldquo;check-existence-only&rdquo; header was set to true</span><span><br>304 &ldquo;Not modified&rdquo;
+            - returned when a folder modification check was made and no contents were modified after the time specified in the &ldquo;if-modified-since&rdquo;
+            header.</span><span><br>404 &ldquo;Not found&rdquo; &ndash; the directory at the indicated URI does not exist.</span><span><br>413 &ldquo;Request entity too large&rdquo;
+            - the request timed out. This can happen if the request is taking too long to process when doing a recursive query.</span>
+        </p></td>
+    </tr>
+    </tbody>
+</table>
+<h3 class="c2"><span class="c16"><br></span><span>Copy, Move of an existing directory </span></h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>URL</span></p></td>
+        <td class="c6"><p class="c2"><span>http://someURL.com/directory</span><span>/&lt;directory path&gt;</span></p>
+        </td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Method</span></p></td>
+        <td class="c6"><p class="c2"><span>PUT</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Headers</span></p></td>
+        <td class="c6"><p class="c2"><span class="c3">Required</span></p>
+
+            <p class="c2"><span class="c10">sourceURI</span><span><br>value= &lt;source directory path in same format as in the URL&gt;</span>
+            </p>
+
+            <p class="c2"><span class="c10">operation<br></span><span>value=&rdquo;copy&rdquo; or &ldquo;move&rdquo;<br></span>
+            </p>
+
+            <p class="c2"><span>NOTE: the destination directory must not exist.</span></p>
+
+            <p class="c2"><span>TBD for cloud: may need to include credentials and user account info</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Body</span></p></td>
+        <td class="c6"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Headers</span></p></td>
+        <td class="c6"><p class="c2"><span>Cache-Control: no-cache</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Body</span></p></td>
+        <td class="c6"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Return Status Codes</span></p></td>
+        <td class="c6"><p class="c2"><span>204 &ldquo;No Content&rdquo; &ndash; The operation succeeded<br>404 &ldquo;Not found&rdquo; &ndash;
+            the source file at the indicated URI does not exist.<br>400-&ldquo;Bad Request&rdquo; &ndash; if the operation value is invalid or if the destination directory <br>500 &ldquo;Internal Server Error&rdquo; &ndash;
+            the file operation was not able to be completed.</span></p></td>
+    </tr>
+    </tbody>
+</table>
+<p class="c11 c2"><span></span></p>
+
+<p class="c11 c2"><span></span></p></body>
+</html>
