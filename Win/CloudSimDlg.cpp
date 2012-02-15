@@ -138,7 +138,7 @@ bool WinPlatformUtils::GetPreferenceBool(const wchar_t *key, bool defaultValue)
 	if(key && wcslen(key))
 	{
 		CWinApp *ncsApp = AfxGetApp();
-		ret = ncsApp->GetProfileInt(OPTIONS_REG_KEY, key, 0) > 0;		
+		ret = ncsApp->GetProfileInt(OPTIONS_REG_KEY, key, defaultValue == true ? 1 : 0) > 0;		
 	}
 	
 	return ret;
