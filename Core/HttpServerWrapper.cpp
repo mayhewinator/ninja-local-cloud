@@ -413,7 +413,7 @@ bool CHttpServerWrapper::ApproveConnectionRequest(const char *origin)
             std::string o;
             NinjaUtilities::WStringToString(localOrigin, o);
             if(NinjaUtilities::CompareStringsNoCase(origin, o.c_str()) == 0 || 
-                (NinjaUtilities::CompareStringsNoCase("chrome-extension://*", o.c_str()) == 0 && strstr("chrome-extension://", origin) == 0))
+                (NinjaUtilities::CompareStringsNoCase("chrome-extension://*", o.c_str()) == 0 && strstr(origin, "chrome-extension://") != NULL))
             {
                 ret = true;
             }
