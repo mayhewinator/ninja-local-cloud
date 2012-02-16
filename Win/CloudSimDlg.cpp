@@ -19,8 +19,16 @@
 #endif
 
 
-// CAboutDlg dialog used for App About
+static int gDPIX = 96;
+static int gDPIY = 96;
 
+// DPI resolution independence helper methods
+int ScaleX(int x) { return MulDiv(x, gDPIX, 96); }
+int ScaleY(int y) { return MulDiv(y, gDPIY, 96); }
+int PointsToPixels(int pt) { return MulDiv(pt, gDPIY, 72); }
+
+
+// CAboutDlg dialog used for App About
 class CAboutDlg : public CDialogEx
 {
 public:
@@ -191,15 +199,12 @@ CCloudSimDlg::CCloudSimDlg(CWnd* pParent /*=NULL*/)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	
-    m_advancedOptionsShown = false;
+    m_advancedOptionsShown = true; // initially they are visible at launch since the dialog resource is full sized
 
     m_server = NULL;
 	
     m_platformUtils = new WinPlatformUtils(this);
 	m_fileIOManager = new NinjaFileIO::WinFileIOManager();
-    
-    m_largeFont = new CFont();
-    m_largeFont->CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Tahoma"); 
 }
 
 CCloudSimDlg::~CCloudSimDlg()
@@ -240,15 +245,23 @@ BEGIN_MESSAGE_MAP(CCloudSimDlg, CDialogEx)
     ON_EN_CHANGE(IDC_PORTNUMEDIT, &CCloudSimDlg::OnChangePortNumber)
 END_MESSAGE_MAP()
 
-
 // CCloudSimDlg message handlers
 
 BOOL CCloudSimDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// Add "About..." menu item to system menu.
+    // calculate the screen DPI
+    CDC *pdc = GetDC();
+    if (pdc)
+    {
+        gDPIX = pdc->GetDeviceCaps(LOGPIXELSX);
+        gDPIY = pdc->GetDeviceCaps(LOGPIXELSY);        
+    }
+    ReleaseDC(pdc);
 
+
+	// Add "About..." menu item to system menu.
 	// IDM_ABOUTBOX must be in the system command range.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
@@ -306,6 +319,9 @@ BOOL CCloudSimDlg::OnInitDialog()
 	m_portNumberCtrl.SetWindowText(portStr);
 	m_rootDirCtrl.SetWindowText(m_rootDir);
 
+    m_largeFont = new CFont();
+    m_largeFont->CreateFont(ScaleY(16), 0, 0, 0, FW_NORMAL, FALSE, FALSE, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Tahoma"); 
+
     // set our larger font for the URL label and URL controls
     m_statusCtrl.SetFont(m_largeFont);
     GetDlgItem(IDC_URL_LABEL_CTRL)->SetFont(m_largeFont);
@@ -316,7 +332,7 @@ BOOL CCloudSimDlg::OnInitDialog()
 
     UpdateStatus();
 
-    UpdateOptionsState();
+    ShowOptions(false); // start in basic mode
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -584,18 +600,27 @@ void CCloudSimDlg::OnAdvancedOptionsClick()
 
 void CCloudSimDlg::UpdateOptionsState()
 {
-    int newHeight = 165;
+    CWnd *optsBtn = GetDlgItem(IDC_ADVANCEDOPSBTN), *logBox = GetDlgItem(IDC_LOGGROUPBOX),
+        *optsBox = GetDlgItem(IDC_OPTIONSGROPBOX);    
+    CRect curRect, optsBtnRect, logRect;
+    GetWindowRect(&curRect);
+    optsBtn->GetWindowRect(&optsBtnRect);
+    logBox->GetWindowRect(&logRect);
+
     if(m_advancedOptionsShown)
-    {
-        newHeight = 470;
+    {        
+        curRect.bottom += (logRect.bottom - optsBtnRect.bottom);
+        optsBox->ShowWindow(SW_SHOW); // ensure it is visible again
         GetDlgItem(IDC_ADVANCEDOPSBTN)->SetWindowText(L"Basic");
     }
-    else
+    else // in basic mode
     {
+        curRect.bottom -= (logRect.bottom - optsBtnRect.bottom);
+        optsBox->ShowWindow(SW_HIDE); // hide this or its title can be seen in basic mode
         GetDlgItem(IDC_ADVANCEDOPSBTN)->SetWindowText(L"Advanced");
     }
 
-    SetWindowPos(&CWnd::wndBottom, 0, 0, 485, newHeight, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+    SetWindowPos(&CWnd::wndBottom, 0, 0, curRect.Width(), curRect.Height(), SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
 }
 
 void CCloudSimDlg::ShowOptions(bool showOpts)
