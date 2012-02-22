@@ -410,10 +410,11 @@ bool CHttpServerWrapper::ApproveConnectionRequest(const char *origin)
         std::wstring localOrigin;
         if(m_platformUtils->GetLocalNinjaOrigin(localOrigin) && localOrigin.length())
         {
-            std::string o;
-            NinjaUtilities::WStringToString(localOrigin, o);
-            if(NinjaUtilities::CompareStringsNoCase(origin, o.c_str()) == 0 || 
-                (NinjaUtilities::CompareStringsNoCase("chrome-extension://*", o.c_str()) == 0 && strstr(origin, "chrome-extension://") != NULL))
+            std::string localOriginCopy;
+            NinjaUtilities::WStringToString(localOrigin, localOriginCopy);
+            if(NinjaUtilities::CompareStringsNoCase(origin, localOriginCopy.c_str()) == 0 || 
+                (NinjaUtilities::CompareStringsNoCase("chrome-extension://*", localOriginCopy.c_str()) == 0 && strstr(origin, "chrome-extension://") != NULL) ||
+                NinjaUtilities::CompareStringsNoCase("*", localOriginCopy.c_str()) == 0)
             {
                 ret = true;
             }
