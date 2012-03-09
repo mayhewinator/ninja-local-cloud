@@ -29,7 +29,6 @@ namespace NinjaFileIO
 	{
 #ifdef _MAC
 		m_nsFMgr = [[NSFileManager alloc] init];
-		NSLog(@"m_nsFMgr retain count is %d", [m_nsFMgr retainCount]);
 #endif
 	}
 

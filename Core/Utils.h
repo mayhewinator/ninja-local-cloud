@@ -113,6 +113,9 @@ namespace NinjaUtilities
 	class PlatformUtility
 	{
 	public:
+        PlatformUtility() {}
+        virtual ~PlatformUtility() {}
+        
 		virtual void LogMessage(const wchar_t *msg) = 0;
 
         // this should get the optional secondary origin for Ninja (usually local for dev purposes).        

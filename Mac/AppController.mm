@@ -24,6 +24,8 @@ public:
 	{
 		appController = ac;
 	}
+    
+    virtual ~MacPlatformUtils() {}
 	
 	void LogMessage(const wchar_t *msg)
 	{
