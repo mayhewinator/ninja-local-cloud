@@ -17,3 +17,9 @@ Mac/build/*
 *.perspective
 *.perspectivev3
 *.pbxuser
+*.xcuserstate
+
+*.swp
+*~.nib
+project.xcworkspace/
+xcuserdata/
