@@ -118,7 +118,8 @@ struct HttpResponseData
 		std::stringstream sstr;
 		sstr << "HTTP/1.1 " << responseStatusDescriptions[responseStatus] << "\r\n";
 
-        sstr << "Access-Control-Allow-Origin: " << origin << "\r\n";
+        if(origin.length() > 0)
+            sstr << "Access-Control-Allow-Origin: " << origin << "\r\n";
         sstr << "Access-Control-Allow-Methods: POST, GET, DELETE, PUT\r\n";
         sstr << "Access-Control-Allow-Headers: Content-Type, sourceURI, overwrite-destination, check-existence-only, recursive, return-type, operation, delete-source, file-filters, if-modified-since, get-file-info\r\n";
         sstr << "Access-Control-Max-Age: 1728000\r\n";
@@ -160,6 +161,8 @@ void RespondToUnauthorizedRequest(mg_connection *conn, CHttpServerWrapper *wrapp
         const char *originHdr = mg_get_header(conn, "Origin");	
         if(originHdr)
             wrapper->LogMessage("Ignoring request from origin \"%s\"", originHdr);
+        else
+            wrapper->LogMessage("Ignoring request from unknown origin");
 
         char timeBuffer[100];
         NinjaUtilities::GetHttpResponseTime(timeBuffer, 100);
@@ -220,22 +223,24 @@ void *mongooseEventHandler(enum mg_event event, struct mg_connection *conn, cons
         const char *originHdr = mg_get_header(conn, "Origin");
         if(originHdr != NULL)
         {
+            bool processedRequest = false;
             if(wrapper->ApproveConnectionRequest(originHdr))
             {
                 if(NinjaUtilities::IsUrlForNinjaFileService(uriWstr.c_str()))
                 {
-                    wrapper->HandleFileServiceRequest(conn, request_info);
+                    processedRequest = wrapper->HandleFileServiceRequest(conn, request_info);
                 }
                 else if(NinjaUtilities::IsUrlForNinjaDirectoryService(uriWstr.c_str()))
                 {
-                    wrapper->HandleDirectoryServiceRequest(conn, request_info);
+                    processedRequest = wrapper->HandleDirectoryServiceRequest(conn, request_info);
                 }
                 else if(NinjaUtilities::IsUrlForNinjaCloudStatus(uriWstr.c_str()))
                 {
                     // process the request
                     HttpResponseData resp;
                     resp.responseStatus =  responseStatus200;
-                    resp.origin = originHdr;	
+                    if(originHdr)
+                        resp.origin = originHdr;	
                     resp.contentType = "application/json";
                     std::wstring drw = wrapper->GetDocumentRoot(), verNumw;
                     
@@ -256,13 +261,16 @@ void *mongooseEventHandler(enum mg_event event, struct mg_connection *conn, cons
                     std::string respStr = resp.GetResponsString();
                     mg_write(conn, respStr.c_str(), respStr.length());
                     wrapper->LogMessage(L"Cloud status request received");
+                    processedRequest = true;
                 }
             }
             else
             {
                 RespondToUnauthorizedRequest(conn, wrapper);
+                processedRequest = true;
             }
-            processed = (void*)1; // mark this request as processed by us so Mongoose does not attempt to handle it
+            if(processedRequest)
+                processed = (void*)1; // mark this request as processed by us so Mongoose does not attempt to handle it
         }
 		
 #ifdef _MAC
@@ -400,27 +408,29 @@ bool CHttpServerWrapper::ApproveConnectionRequest(const char *origin)
 {
     bool ret = false;
 
-    if(origin && strlen(origin) && NinjaUtilities::CompareStringsNoCase(origin, Approved_Ninja_Origin) == 0)
+    if(origin && strlen(origin))
     {
-        ret = true;
-    }
-    else
-    {
-        // check if a secondary origin has been specified
-        std::wstring localOrigin;
-        if(m_platformUtils->GetLocalNinjaOrigin(localOrigin) && localOrigin.length())
+        if(NinjaUtilities::CompareStringsNoCase(origin, Approved_Ninja_Origin) == 0)
         {
-            std::string localOriginCopy;
-            NinjaUtilities::WStringToString(localOrigin, localOriginCopy);
-            if(NinjaUtilities::CompareStringsNoCase(origin, localOriginCopy.c_str()) == 0 || 
-                (NinjaUtilities::CompareStringsNoCase("chrome-extension://*", localOriginCopy.c_str()) == 0 && strstr(origin, "chrome-extension://") != NULL) ||
-                NinjaUtilities::CompareStringsNoCase("*", localOriginCopy.c_str()) == 0)
+            ret = true;
+        }
+        else
+        {
+            // check if a secondary origin has been specified
+            std::wstring localOrigin;
+            if(m_platformUtils->GetLocalNinjaOrigin(localOrigin) && localOrigin.length())
             {
-                ret = true;
+                std::string localOriginCopy;
+                NinjaUtilities::WStringToString(localOrigin, localOriginCopy);
+                if(NinjaUtilities::CompareStringsNoCase(origin, localOriginCopy.c_str()) == 0 || 
+                    (NinjaUtilities::CompareStringsNoCase("chrome-extension://*", localOriginCopy.c_str()) == 0 && strstr(origin, "chrome-extension://") != NULL) ||
+                    NinjaUtilities::CompareStringsNoCase("*", localOriginCopy.c_str()) == 0)
+                {
+                    ret = true;
+                }
             }
         }
     }
-
     return ret;
 }
 
@@ -493,7 +503,9 @@ bool CHttpServerWrapper::HandleFileServiceRequest(mg_connection *conn, const mg_
 			HttpResponseData resp;
 			resp.responseStatus =  responseStatus501;
 			resp.contentType = "text/plain, charset=utf-8";
-			resp.origin = mg_get_header(conn, "ORIGIN");			
+            const char *origHdr = mg_get_header(conn, "ORIGIN");			
+            if(origHdr)
+                resp.origin = origHdr;
 
 			size_t size = 0;
 			byte* bytes = NULL;
@@ -711,6 +723,7 @@ bool CHttpServerWrapper::HandleFileServiceRequest(mg_connection *conn, const mg_
 			LogMessage("     Response: %s", responseStatusDescriptions[resp.responseStatus]);
 			std::string respStr = resp.GetResponsString();
 			mg_write(conn, respStr.c_str(), respStr.length());
+            ret = true;
 		}
 	}
 	catch(...)
@@ -1181,6 +1194,7 @@ bool CHttpServerWrapper::HandleDirectoryServiceRequest(mg_connection *conn, cons
 			LogMessage("     Response: %s", responseStatusDescriptions[resp.responseStatus]);
 			std::string respStr = resp.GetResponsString();
 			mg_write(conn, respStr.c_str(), respStr.length());
+            ret = true;
 		}
 	}
 	catch (...)
