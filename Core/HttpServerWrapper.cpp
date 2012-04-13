@@ -114,18 +114,15 @@ struct HttpResponseData
 		}
 	}
 
-	std::string GetResponsString(bool outputXDomainHeaders = true, bool outputResponse = true) {
+	std::string GetResponsString(bool outputResponse = true) {
 		std::stringstream sstr;
 		sstr << "HTTP/1.1 " << responseStatusDescriptions[responseStatus] << "\r\n";
 
-        if(outputXDomainHeaders)
-        {
-            if(origin.length() > 0)
-                sstr << "Access-Control-Allow-Origin: " << origin << "\r\n";
-            sstr << "Access-Control-Allow-Methods: POST, GET, DELETE, PUT\r\n";
-            sstr << "Access-Control-Allow-Headers: Content-Type, sourceURI, overwrite-destination, check-existence-only, recursive, return-type, operation, delete-source, file-filters, if-modified-since, get-file-info\r\n";
-            sstr << "Access-Control-Max-Age: 1728000\r\n";
-        }
+        if(origin.length() > 0)
+            sstr << "Access-Control-Allow-Origin: " << origin << "\r\n";
+        sstr << "Access-Control-Allow-Methods: POST, GET, DELETE, PUT\r\n";
+        sstr << "Access-Control-Allow-Headers: Content-Type, sourceURI, overwrite-destination, check-existence-only, recursive, return-type, operation, delete-source, file-filters, if-modified-since, get-file-info\r\n";
+        sstr << "Access-Control-Max-Age: 86400\r\n";
         
         char timeBuffer[100];
         NinjaUtilities::GetHttpResponseTime(timeBuffer, 100);
@@ -1252,14 +1249,12 @@ bool CHttpServerWrapper::HandleWebServiceRequest(mg_connection *conn, const mg_r
             if(origHdr)
                 resp.origin = origHdr;
 
-            bool isPreflightRequest = false;
             if(NinjaUtilities::CompareStringsNoCase(request_info->request_method, "options") == 0) 
             {
                 // this is a cross origin preflight request from the browser so we simply need to response
                 // with the correct cross origin responses.
                 LogMessage(L"     Method = OPTIONS. Handling Cross Origin Preflight.");
                 resp.responseStatus = responseStatus200;
-                isPreflightRequest = true;
             }
             else if(NinjaUtilities::CompareStringsNoCase(request_info->request_method, "get") == 0) // Read an existing file from the web 
             {
@@ -1293,7 +1288,7 @@ bool CHttpServerWrapper::HandleWebServiceRequest(mg_connection *conn, const mg_r
             }          
 
             LogMessage("     Response: %s", responseStatusDescriptions[resp.responseStatus]);
-            std::string respStr = resp.GetResponsString(isPreflightRequest, !returnBinaryData);
+            std::string respStr = resp.GetResponsString(!returnBinaryData);
             mg_write(conn, respStr.c_str(), respStr.length());
 
             if(returnBinaryData && resp.responseStatus == responseStatus200)
