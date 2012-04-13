@@ -114,15 +114,18 @@ struct HttpResponseData
 		}
 	}
 
-	std::string GetResponsString() {
+	std::string GetResponsString(bool outputXDomainHeaders = true, bool outputResponse = true) {
 		std::stringstream sstr;
 		sstr << "HTTP/1.1 " << responseStatusDescriptions[responseStatus] << "\r\n";
 
-        if(origin.length() > 0)
-            sstr << "Access-Control-Allow-Origin: " << origin << "\r\n";
-        sstr << "Access-Control-Allow-Methods: POST, GET, DELETE, PUT\r\n";
-        sstr << "Access-Control-Allow-Headers: Content-Type, sourceURI, overwrite-destination, check-existence-only, recursive, return-type, operation, delete-source, file-filters, if-modified-since, get-file-info\r\n";
-        sstr << "Access-Control-Max-Age: 1728000\r\n";
+        if(outputXDomainHeaders)
+        {
+            if(origin.length() > 0)
+                sstr << "Access-Control-Allow-Origin: " << origin << "\r\n";
+            sstr << "Access-Control-Allow-Methods: POST, GET, DELETE, PUT\r\n";
+            sstr << "Access-Control-Allow-Headers: Content-Type, sourceURI, overwrite-destination, check-existence-only, recursive, return-type, operation, delete-source, file-filters, if-modified-since, get-file-info\r\n";
+            sstr << "Access-Control-Max-Age: 1728000\r\n";
+        }
         
         char timeBuffer[100];
         NinjaUtilities::GetHttpResponseTime(timeBuffer, 100);
@@ -144,11 +147,12 @@ struct HttpResponseData
 
 		sstr << "Cache-Control: no-cache\r\n";
 		sstr << "Content-Type: " << contentType << "\r\n";
-		sstr << "Content-Length: " << responseBody.length() << "\r\n";
-		if(responseBody.length())
-			sstr << "\r\n" << responseBody;
-		else
-			sstr << "\r\n";
+        if(outputResponse)
+        {
+            sstr << "Content-Length: " << responseBody.length() << "\r\n\r\n";
+            if(responseBody.length())
+                sstr << responseBody;
+        }
 
 		return sstr.str();
 	}
@@ -233,6 +237,10 @@ void *mongooseEventHandler(enum mg_event event, struct mg_connection *conn, cons
                 else if(NinjaUtilities::IsUrlForNinjaDirectoryService(uriWstr.c_str()))
                 {
                     processedRequest = wrapper->HandleDirectoryServiceRequest(conn, request_info);
+                }
+                else if(NinjaUtilities::IsUrlForNinjaWebService(uriWstr.c_str()))
+                {
+                    processedRequest = wrapper->HandleWebServiceRequest(conn, request_info);
                 }
                 else if(NinjaUtilities::IsUrlForNinjaCloudStatus(uriWstr.c_str()))
                 {
@@ -1203,4 +1211,109 @@ bool CHttpServerWrapper::HandleDirectoryServiceRequest(mg_connection *conn, cons
 	}
 
 	return ret;
+}
+
+bool CHttpServerWrapper::HandleWebServiceRequest(mg_connection *conn, const mg_request_info *request_info)
+{
+    bool ret = false;
+    char *fileText = NULL;
+    unsigned char *fileData = NULL;
+    unsigned int contentLen = 0;
+
+    try
+    {
+        if(conn && request_info)
+        {
+            std::string urlstr = request_info->query_string;
+            std::wstring url, path;
+            NinjaUtilities::StringToWString(urlstr, url);
+            path = url;
+
+            if(path.find(L"url=") == 0) // remove leading param str
+                path.erase(0, 4);
+
+            // get any optional headers
+            const char *returnTypeHdr = mg_get_header(conn, "return-type"); // text or binary
+            bool returnBinaryData = false;
+            if(returnTypeHdr != NULL && NinjaUtilities::CompareStringsNoCase(returnTypeHdr, "binary") == 0)
+                returnBinaryData = true;
+
+            LogMessage(L"Web service request with path=\"%ls\"", path.c_str());
+
+            // process the request
+            HttpResponseData resp;
+            resp.responseStatus =  responseStatus501;
+            if(returnBinaryData)
+                resp.contentType = "image/png";//"application/octet-stream";
+            else
+                resp.contentType = "text/plain, charset=utf-8";
+
+            const char *origHdr = mg_get_header(conn, "ORIGIN");			
+            if(origHdr)
+                resp.origin = origHdr;
+
+            bool isPreflightRequest = false;
+            if(NinjaUtilities::CompareStringsNoCase(request_info->request_method, "options") == 0) 
+            {
+                // this is a cross origin preflight request from the browser so we simply need to response
+                // with the correct cross origin responses.
+                LogMessage(L"     Method = OPTIONS. Handling Cross Origin Preflight.");
+                resp.responseStatus = responseStatus200;
+                isPreflightRequest = true;
+            }
+            else if(NinjaUtilities::CompareStringsNoCase(request_info->request_method, "get") == 0) // Read an existing file from the web 
+            {
+                LogMessage(L"     Method = GET. Reading file from the web.");
+
+                if(returnBinaryData)
+                {
+                    if(m_fileMgr->ReadBinaryFromURL(path, &fileData, contentLen))
+                    {
+                        resp.responseStatus = responseStatus200;						
+                    }
+                    else
+                    {
+                        resp.responseStatus = responseStatus404;
+                    }
+                }
+                else
+                {
+                    if(m_fileMgr->ReadTextFromURL(path, &fileText, contentLen))
+				    {
+					    if(contentLen > 0 && fileText)
+						    resp.responseBody = fileText;
+
+					    resp.responseStatus = responseStatus200;						
+				    }
+				    else
+				    {
+					    resp.responseStatus = responseStatus404;
+				    }
+                }
+            }          
+
+            LogMessage("     Response: %s", responseStatusDescriptions[resp.responseStatus]);
+            std::string respStr = resp.GetResponsString(isPreflightRequest, !returnBinaryData);
+            mg_write(conn, respStr.c_str(), respStr.length());
+
+            if(returnBinaryData && resp.responseStatus == responseStatus200)
+            {
+                mg_printf(conn, "Content-Length: %u\r\n\r\n", contentLen);
+                mg_write(conn, fileData, contentLen);
+            }
+
+            ret = true;
+        }
+    }
+    catch (...)
+    {
+        ret = false;
+    }
+
+    if(fileText)
+        delete fileText;
+    if(fileData)
+        delete fileData;
+
+    return ret;
 }

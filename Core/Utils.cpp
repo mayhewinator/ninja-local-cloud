@@ -287,6 +287,15 @@ namespace NinjaUtilities
 		return ret;
 	}
 
+    bool IsUrlForNinjaWebService(const wchar_t* pathIn)
+    {
+        bool ret = false;
+
+        if(pathIn && wcsstr(pathIn, NINJA_WEBAPI_URL_TOKEN) == pathIn)
+            ret = true;
+
+        return ret;
+    }
 	std::wstring GetDefaultProjectRootFolder()
 	{
 		std::wstring ret;

@@ -9,7 +9,10 @@
 #include "WinFileIOManager.h"
 #include "..\Core\Utils.h"
 
-#include<ShellAPI.h>
+#include <ShellAPI.h>
+#include <afxinet.h>
+#include <sstream>
+#include <deque>
 
 namespace NinjaFileIO
 {
@@ -45,12 +48,17 @@ namespace NinjaFileIO
 
 	WinFileIOManager::WinFileIOManager()
 	{
-
+        m_inetSession = NULL;
 	}
 
 	WinFileIOManager::~WinFileIOManager()
 	{
-
+        if(m_inetSession)
+        {
+            m_inetSession->Close();
+            delete m_inetSession;
+            m_inetSession = NULL;
+        }
 	}
 
 	// we override this to use the native Windows file copy routine
@@ -592,4 +600,127 @@ namespace NinjaFileIO
 		return ret;
 	}
 
+    bool WinFileIOManager::ReadTextFromURL(const std::wstring &url, char **fileContents, unsigned int &contentLength)
+    {
+        bool ret = false;
+
+        try 
+        {
+            if(url.length() && fileContents)
+            {
+                if(m_inetSession == NULL)
+                    m_inetSession = new CInternetSession(_T("Ninja Local Cloud"));
+
+                std::stringstream sstr;
+                char szBuff[1024];
+                memset(szBuff, 0, 1024);
+                CHttpFile* pFile = NULL;
+                pFile = dynamic_cast<CHttpFile*>(m_inetSession->OpenURL(url.c_str(), 0, 
+                    INTERNET_FLAG_TRANSFER_ASCII|INTERNET_FLAG_RELOAD|INTERNET_FLAG_DONT_CACHE|INTERNET_FLAG_EXISTING_CONNECT, NULL, 0));
+
+                if(pFile)
+                {
+                    unsigned int bytesRead = 0, totalBytes = 0;
+                    while ((bytesRead = pFile->Read(szBuff, 1023)) > 0)
+                    {         
+                        sstr << szBuff;
+                        memset(szBuff, 0, 1024);
+                        totalBytes += bytesRead;
+                    }
+                    pFile->Close();
+                    delete pFile;
+
+                    std::string respStr = sstr.str();
+
+                    if(respStr.length() > totalBytes)
+                        respStr.resize(totalBytes);
+
+                    if(respStr.length() > 0)
+                    {
+                        contentLength = totalBytes;
+                        *fileContents = new char[contentLength + 1];
+                        memset(*fileContents, 0, sizeof(char)*contentLength + 1);
+
+                        if(*fileContents)
+                        {
+                            strcpy_s(*fileContents, contentLength+1, respStr.c_str());
+                            ret = true;
+                        }
+                    }
+                }
+            }
+        }
+        catch(CInternetException *iex)
+        {
+            iex;            
+        }
+        catch (...) 
+        {
+        }
+
+        return ret;
+    }
+
+    bool WinFileIOManager::ReadBinaryFromURL(const std::wstring &url, unsigned char **fileContents, unsigned int &contentLength)
+    {
+        bool ret = false;
+
+        try 
+        {
+            if(url.length() && fileContents)
+            {
+                if(m_inetSession == NULL)
+                    m_inetSession = new CInternetSession(_T("Ninja Local Cloud"));
+
+                UINT bytesRead = 0, totalBytesRead = 0;
+                std::deque<byte*> outputBuffer;
+                std::deque<unsigned int> outputBufferSizes;
+                byte readBuff[1024];
+                CHttpFile* pFile = NULL;
+                pFile = dynamic_cast<CHttpFile*>(m_inetSession->OpenURL(url.c_str(), 0, 
+                    INTERNET_FLAG_TRANSFER_BINARY|INTERNET_FLAG_RELOAD|INTERNET_FLAG_DONT_CACHE|INTERNET_FLAG_EXISTING_CONNECT, NULL, 0));
+                if(pFile)
+                {
+                    while((bytesRead = pFile->Read(readBuff, 1024)) > 0)
+                    {         
+                        byte *tmpBuff = new byte[bytesRead];
+                        memcpy_s(tmpBuff, bytesRead, readBuff, bytesRead);
+                        outputBuffer.push_back(tmpBuff);
+                        outputBufferSizes.push_back(bytesRead);
+                        totalBytesRead += bytesRead;
+                    }
+                    pFile->Close();
+                    delete pFile;
+
+                    if(totalBytesRead > 0)
+                    {
+                        *fileContents = new byte[totalBytesRead];
+                        if(*fileContents)
+                        {
+                            byte *outBuf = NULL;
+                            unsigned int outBufLen = 0, pos = 0;
+                            for(unsigned int i = 0; i < outputBuffer.size(); i++)
+                            {
+                                outBuf = outputBuffer[i];
+                                outBufLen = outputBufferSizes[i];
+                                memcpy_s((*fileContents) + pos, outBufLen, outBuf, outBufLen);
+                                pos += outBufLen;
+                            }
+                            contentLength = totalBytesRead;
+                            ret = true;
+                        }
+                    }
+                }
+            }
+        }
+        catch(CInternetException *iex)
+        {
+            iex;            
+        }
+        catch (...) 
+        {
+        }
+
+        return ret;
+    }
 }

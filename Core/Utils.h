@@ -19,6 +19,7 @@
 
 #define NINJA_FILEAPI_URL_TOKEN L"/file"
 #define NINJA_DIRECTORYAPI_URL_TOKEN L"/directory"
+#define NINJA_WEBAPI_URL_TOKEN L"/web"
 #define NINJA_CLOUDSTATUS_TOKEN L"/cloudstatus"
 
 #define PATH_SEPARATOR_CHAR L'/'
@@ -91,6 +92,7 @@ namespace NinjaUtilities
     bool IsUrlForNinjaCloudStatus(const wchar_t* pathIn);
     bool IsUrlForNinjaFileService(const wchar_t* pathIn);
     bool IsUrlForNinjaDirectoryService(const wchar_t* pathIn);
+    bool IsUrlForNinjaWebService(const wchar_t* pathIn);
 
 	class PathUtility
 	{

@@ -454,4 +454,38 @@ namespace NinjaFileIO
 
 		return ret;
 	}
+
+    bool MacFileIOManager::ReadTextFromURL(const std::wstring &url, char **fileContents, unsigned int &contentLength)
+    {
+        bool ret = false;
+
+        try 
+        {
+
+            // TODO
+
+        }
+        catch (...) 
+        {
+        }
+
+        return ret;
+    }
+
+    bool MacFileIOManager::ReadBinaryFromURL(const std::wstring &url, unsigned char **fileContents, unsigned int &contentLength)
+    {
+        bool ret = false;
+
+        try 
+        {
+
+            // TODO
+
+        }
+        catch (...) 
+        {
+        }
+
+        return ret;
+    }
 }

@@ -49,6 +49,7 @@ public:
 
 	bool HandleFileServiceRequest(mg_connection *conn, const mg_request_info *request_info);
 	bool HandleDirectoryServiceRequest(mg_connection *conn, const mg_request_info *request_info);
+    bool HandleWebServiceRequest(mg_connection *conn, const mg_request_info *request_info);
 
     bool ApproveConnectionRequest(const char *origin);
 

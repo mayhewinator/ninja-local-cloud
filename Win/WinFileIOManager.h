@@ -8,6 +8,8 @@
 #pragma once
 #include "..\Core\FileIOManager.h"
 
+class CInternetSession;
+
 namespace NinjaFileIO
 {
 	class WinFileIOManager : public FileIOManager
@@ -31,8 +33,13 @@ namespace NinjaFileIO
 			time_t requestStartTime, bool &requestTimedOut); 
 		bool DirectoryIsEmpty(const std::wstring &path);
 		bool GetDirectoryTimes(const std::wstring &path, unsigned long long &createdTime, unsigned long long &modifiedTime);
+        
+        bool ReadTextFromURL(const std::wstring &url, char **fileContents, unsigned int &contentLength); // caller must free fileContents
+        bool ReadBinaryFromURL(const std::wstring &url, unsigned char **fileContents, unsigned int &contentLength); // caller must free fileContents
 
 	private:
 		void FileOpenHelper(const std::wstring &initialPath, bool directoryMode, const std::wstring &title, std::vector<std::wstring> &uRIsOut);
+
+        CInternetSession *m_inetSession;
 	};
 }

@@ -74,6 +74,10 @@ namespace NinjaFileIO
 		virtual bool MoveDirectory(const std::wstring &path, const std::wstring &newPath) = 0;
 		virtual bool ReadDirectory(const std::wstring &path, DirectoryContentTypes types, const std::wstring &filterList, FileSystemNodeList &dirContents,
 			time_t requestStartTime, bool &requestTimedOut) = 0; 
+
+        // Web APIs to retrieve files from the web via HTTP 
+        virtual bool ReadTextFromURL(const std::wstring &url, char **fileContents, unsigned int &contentLength) = 0; // caller must free fileContents
+        virtual bool ReadBinaryFromURL(const std::wstring &url, unsigned char **fileContents, unsigned int &contentLength) = 0; // caller must free fileContents
 		
 	protected:
 #ifdef _MAC
