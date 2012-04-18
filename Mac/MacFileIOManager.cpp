@@ -458,34 +458,88 @@ namespace NinjaFileIO
     bool MacFileIOManager::ReadTextFromURL(const std::wstring &url, char **fileContents, unsigned int &contentLength)
     {
         bool ret = false;
-
+        
         try 
         {
-
-            // TODO
-
+            if(url.length() > 0 && fileContents != NULL)
+            {
+                NSError *errorVal;
+                
+                NSString *url2 = NinjaUtilities::WStringToNSString(url);		
+                NSURL *tmpUrl = [NSURL URLWithString:url2]; 
+                
+                NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:tmpUrl];
+                
+                [req addValue: @"text/plain; charset=utf-8"forHTTPHeaderField:@"Content-Type"];
+                [req setHTTPMethod:@"GET"]; 
+                
+                NSURLResponse *respInfo;
+                NSData *responseData = [NSURLConnection sendSynchronousRequest:req returningResponse:&respInfo error:&errorVal];
+                if (responseData) 
+                {
+                    NSString *respStr = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+                    
+                    if([respStr canBeConvertedToEncoding:NSUTF8StringEncoding] == YES && [respStr lengthOfBytesUsingEncoding:NSUTF8StringEncoding] > 0)
+                    {
+                        contentLength = [respStr lengthOfBytesUsingEncoding:NSUTF8StringEncoding];                   
+                        *fileContents = new char[contentLength + 1];
+                        if(*fileContents)
+                        {
+                            memset(*fileContents, 0, sizeof(char)*contentLength + 1);
+                            if([respStr getCString:*fileContents maxLength:contentLength+1 encoding:NSUTF8StringEncoding] == YES)
+                            {
+                                ret = true;
+                            }
+                        }
+                    }
+                    [respStr release];
+                }
+            }
         }
         catch (...) 
         {
         }
-
+        
         return ret;
     }
 
     bool MacFileIOManager::ReadBinaryFromURL(const std::wstring &url, unsigned char **fileContents, unsigned int &contentLength)
     {
         bool ret = false;
-
+        
         try 
         {
-
-            // TODO
-
+            if(url.length() > 0 && fileContents != NULL)
+            {
+                NSError *errorVal;
+                
+                NSString *url2 = NinjaUtilities::WStringToNSString(url);		
+                NSURL *tmpUrl = [NSURL URLWithString:url2]; 
+                
+                NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:tmpUrl];
+                
+                [req addValue: @"text/plain; charset=utf-8"forHTTPHeaderField:@"Content-Type"];
+                [req setHTTPMethod:@"GET"]; 
+                
+                NSURLResponse *respInfo;
+                NSData *responseData = [NSURLConnection sendSynchronousRequest:req returningResponse:&respInfo error:&errorVal];
+                if (responseData && [responseData length] > 0) 
+                {
+                    contentLength = [responseData length];                   
+                    *fileContents = new unsigned char[contentLength];
+                    if(*fileContents != NULL)
+                    {
+                        memset(*fileContents, 0, sizeof(char)*contentLength);
+                        [responseData getBytes:*fileContents length:contentLength];
+                        ret = true;
+                    }
+                }
+            }
         }
         catch (...) 
         {
         }
-
+        
         return ret;
     }
 }
