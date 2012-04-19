@@ -16,26 +16,6 @@
 
 namespace NinjaFileIO
 {
-	static COMDLG_FILTERSPEC fileOpenSpecs[] =
-	{ 
-		{ L"HTML files", L"*.htm;*.html" },
-		{ L"Cascading Style Sheets", L"*.css" },
-		{ L"Javascript files", L"*.js" },
-		{ L"XML files", L"*.xml" },
-		{ L"JSON files", L"*.json" },
-		{ L"All files", L"*.*" }
-	};
-
-	static COMDLG_FILTERSPEC fileSaveSpecs[] =
-	{ 
-		{ L"HTML files", L"*.htm;*.html" },
-		{ L"Cascading Style Sheets", L"*.css" },
-		{ L"Javascript files", L"*.js" },
-		{ L"XML files", L"*.xml" },
-		{ L"JSON files", L"*.json" },
-		{ L"All files", L"*.*" }
-	};
-
 	// this converts a windows FILETIME to the number of milliseconds since 1/1/1970 UTC
 	static unsigned long long int WinFileTimeToUnixEpochMS(FILETIME winTime)
 	{
