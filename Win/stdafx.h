@@ -48,3 +48,8 @@
 #endif
 
 #include <stdlib.h>
+
+#ifdef _DEBUG
+// This enables memory leak detection for the CRT to find leaks in mongoose, etc.
+#define _CRTDBG_CHECK_DEFAULT_DF    1 
+#endif
