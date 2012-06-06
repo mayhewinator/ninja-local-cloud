@@ -114,7 +114,7 @@ struct HttpResponseData
 		}
 	}
 
-	std::string GetResponsString(bool outputResponse = true) {
+	void GetResponsString(std::string &strOut, bool outputResponse = true) {
 		std::stringstream sstr;
 		sstr << "HTTP/1.1 " << responseStatusDescriptions[responseStatus] << "\r\n";
 
@@ -151,7 +151,7 @@ struct HttpResponseData
                 sstr << responseBody;
         }
 
-		return sstr.str();
+		strOut = sstr.str();
 	}
 };
 
@@ -263,7 +263,8 @@ void *mongooseEventHandler(enum mg_event event, struct mg_connection *conn, cons
                     }
                     resp.responseBody += "\"}";  
 
-                    std::string respStr = resp.GetResponsString();
+                    std::string respStr;
+                    resp.GetResponsString(respStr);
                     mg_write(conn, respStr.c_str(), respStr.length());
                     wrapper->LogMessage(L"Cloud status request received");
                     processedRequest = true;
@@ -711,7 +712,11 @@ bool CHttpServerWrapper::HandleFileServiceRequest(mg_connection *conn, const mg_
 					if(m_fileMgr->ReadFile(path, &fileBytes, contentLen))
 					{
 						if(contentLen > 0 && fileBytes)
+                        {
 							resp.responseBody = fileBytes;
+                            delete fileBytes;
+                            fileBytes = NULL;
+                        }
 
 						resp.responseStatus = responseStatus200;						
 					}
@@ -726,7 +731,8 @@ bool CHttpServerWrapper::HandleFileServiceRequest(mg_connection *conn, const mg_
 				delete [] bytes;
 
 			LogMessage("     Response: %s", responseStatusDescriptions[resp.responseStatus]);
-			std::string respStr = resp.GetResponsString();
+			std::string respStr;
+            resp.GetResponsString(respStr);
 			mg_write(conn, respStr.c_str(), respStr.length());
             ret = true;
 		}
@@ -1197,7 +1203,8 @@ bool CHttpServerWrapper::HandleDirectoryServiceRequest(mg_connection *conn, cons
 				delete [] bytes;
 
 			LogMessage("     Response: %s", responseStatusDescriptions[resp.responseStatus]);
-			std::string respStr = resp.GetResponsString();
+			std::string respStr;
+            resp.GetResponsString(respStr);
 			mg_write(conn, respStr.c_str(), respStr.length());
             ret = true;
 		}
@@ -1288,7 +1295,8 @@ bool CHttpServerWrapper::HandleWebServiceRequest(mg_connection *conn, const mg_r
             }          
 
             LogMessage("     Response: %s", responseStatusDescriptions[resp.responseStatus]);
-            std::string respStr = resp.GetResponsString(!returnBinaryData);
+            std::string respStr;
+            resp.GetResponsString(respStr, !returnBinaryData);
             mg_write(conn, respStr.c_str(), respStr.length());
 
             if(returnBinaryData && resp.responseStatus == responseStatus200)
