@@ -2588,6 +2588,7 @@ static void handle_file_request(struct mg_connection *conn, const char *path,
   (void) mg_snprintf(conn, etag, sizeof(etag), "%lx.%lx",
       (unsigned long) stp->mtime, (unsigned long) stp->size);
 
+  // John Mayhew change - Added the Cache-Control: no-cache header here to keep the user content in our browser preview window from being cached.
   (void) mg_printf(conn,
       "HTTP/1.1 %d %s\r\n"
       "Date: %s\r\n"
