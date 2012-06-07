@@ -28,6 +28,10 @@ CCloudSimApp::CCloudSimApp()
 {
 	// Add simple construction code here,
 	// Place all significant initialization in InitInstance
+#ifdef _DEBUG
+	//AfxSetAllocStop(487);
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+#endif
 }
 
 

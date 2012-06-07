@@ -50,6 +50,9 @@
 #include <stdlib.h>
 
 #ifdef _DEBUG
-// This enables memory leak detection for the CRT to find leaks in mongoose, etc.
-#define _CRTDBG_CHECK_DEFAULT_DF    1 
+// This enables memory leak detection for the MFC and the CRT to find leaks in mongoose, etc.
+#define _CRTDBG_CHECK_DEFAULT_DF    1
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 #endif
