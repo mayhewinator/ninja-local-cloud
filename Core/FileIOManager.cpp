@@ -68,7 +68,7 @@ namespace NinjaFileIO
 		return ret;
 	}
 
-	bool FileIOManager::CreateNewFile(const std::wstring &filename)
+	bool FileIOManager::CreateNewFile(const std::wstring &filename, char *fileContents /*= NULL*/, unsigned int contentLength /*= 0*/)
 	{
 		bool ret = false;
 
@@ -83,14 +83,26 @@ namespace NinjaFileIO
 				if(stream != NULL)
 				{
 					// the file has been created
-					fclose(stream);
-					return true;
+
+                    if(fileContents && contentLength)
+                    {
+                        if(fwrite(fileContents, sizeof(char), contentLength, stream) == contentLength)
+                            ret = true;
+                    }
+                    else
+                        ret = true;
+
+					fclose(stream);					
 				}
 #else // MAC
+                NSData *data = nil;
+                if(fileContents && contentLength)
+                    NSData *data = [NSData dataWithBytes: fileContents length:contentLength];
+
 				NSString *filePath = NinjaUtilities::WStringToNSString(filename);
-				if ([m_nsFMgr createFileAtPath:filePath contents:nil attributes:nil] == YES) {
+				if ([m_nsFMgr createFileAtPath:filePath contents:data attributes:nil] == YES) 
 					ret = true;
-				};
+
 				[filePath release];
 #endif
 			}

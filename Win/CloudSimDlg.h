@@ -33,6 +33,7 @@ private:
 	CHttpServerWrapper *m_server;
 	WinPlatformUtils *m_platformUtils;
 	NinjaFileIO::WinFileIOManager *m_fileIOManager;
+    bool m_loggingEnabled;
 
 	int GetPortNumber();
 	LPCTSTR GetRootDir();
@@ -78,4 +79,6 @@ public:
     afx_msg void OnCopyURLToClibpoard();
     afx_msg void OnAdvancedOptionsClick();
     afx_msg void OnChangePortNumber();
+    afx_msg void OnEnableLoggingClick();
+    CButton m_enableLoggingChk;
 };

@@ -205,6 +205,7 @@ CCloudSimDlg::CCloudSimDlg(CWnd* pParent /*=NULL*/)
 	
     m_platformUtils = new WinPlatformUtils(this);
 	m_fileIOManager = new NinjaFileIO::WinFileIOManager();
+    m_loggingEnabled = false;
 }
 
 CCloudSimDlg::~CCloudSimDlg()
@@ -230,6 +231,7 @@ void CCloudSimDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_STARTBUTTON, m_startBtn);
     DDX_Control(pDX, IDC_STOPBUTTON, m_stopBtn);
     DDX_Control(pDX, IDC_URL_CTRL, m_statusCtrl);
+    DDX_Control(pDX, IDC_ENABLELOGCHK, m_enableLoggingChk);
 }
 
 BEGIN_MESSAGE_MAP(CCloudSimDlg, CDialogEx)
@@ -243,6 +245,7 @@ BEGIN_MESSAGE_MAP(CCloudSimDlg, CDialogEx)
     ON_BN_CLICKED(IDC_COPYURL_BTN, &CCloudSimDlg::OnCopyURLToClibpoard)
     ON_BN_CLICKED(IDC_ADVANCEDOPSBTN, &CCloudSimDlg::OnAdvancedOptionsClick)
     ON_EN_CHANGE(IDC_PORTNUMEDIT, &CCloudSimDlg::OnChangePortNumber)
+    ON_BN_CLICKED(IDC_ENABLELOGCHK, &CCloudSimDlg::OnEnableLoggingClick)
 END_MESSAGE_MAP()
 
 // CCloudSimDlg message handlers
@@ -299,6 +302,9 @@ BOOL CCloudSimDlg::OnInitDialog()
         if(m_portNum <= 0)
             m_portNum = 16280; // must pick some default port value
     }
+
+    m_loggingEnabled = ncsApp->GetProfileInt(OPTIONS_REG_KEY, ENABLELOGGING_REG_KEY, 0) != 0;
+    m_enableLoggingChk.SetCheck(m_loggingEnabled ? BST_CHECKED : BST_UNCHECKED);
 
     m_localNinjaOrigin = ncsApp->GetProfileString(OPTIONS_REG_KEY, LOCALORIGIN_REG_KEY, L"");
 
@@ -388,16 +394,19 @@ void CCloudSimDlg::OnPaint()
 
 void CCloudSimDlg::LogMessage(LPCTSTR msg)
 {
-	int cnt = m_logEditCtrl.GetLineCount();
+    if(m_loggingEnabled)
+    {
+	    int cnt = m_logEditCtrl.GetLineCount();
 
-	CString str;
-	m_logEditCtrl.GetWindowText(str);
-	str += msg;
-	str += "\r\n";
-	m_logEditCtrl.SetWindowText(str);
+	    CString str;
+	    m_logEditCtrl.GetWindowText(str);
+	    str += msg;
+	    str += "\r\n";
+	    m_logEditCtrl.SetWindowText(str);
 
-	// Scroll the edit control so that the first visible line
-	m_logEditCtrl.LineScroll(cnt, 0);
+	    // Scroll the edit control so that the first visible line
+	    m_logEditCtrl.LineScroll(cnt, 0);
+    }
 }
 
 // The system calls this function to obtain the cursor to display while the user drags
@@ -539,6 +548,7 @@ void CCloudSimDlg::Shutdown()
 	CWinApp *ncsApp = AfxGetApp();
 	ncsApp->WriteProfileInt(OPTIONS_REG_KEY, PORT_REG_KEY, m_portNum);
 	ncsApp->WriteProfileString(OPTIONS_REG_KEY, ROOTDIR_REG_KEY, m_rootDir);
+    ncsApp->WriteProfileInt(OPTIONS_REG_KEY, ENABLELOGGING_REG_KEY, m_loggingEnabled ? 1 : 0);
 }
 
 void CCloudSimDlg::GetLocalNinjaOrigin(std::wstring &valOut)
@@ -639,4 +649,10 @@ void CCloudSimDlg::OnChangePortNumber()
 	std::wstring newURL;
 	if(NinjaUtilities::GetLocalURLForPort(m_portNum, newURL))
 		m_statusCtrl.SetWindowText(newURL.c_str());
+}
+
+
+void CCloudSimDlg::OnEnableLoggingClick()
+{
+    m_loggingEnabled = (m_enableLoggingChk.GetCheck() == BST_CHECKED);
 }

@@ -18,6 +18,7 @@
 #define PORT_REG_KEY L"Port"
 #define ROOTDIR_REG_KEY L"Root Directory"
 #define LOCALORIGIN_REG_KEY L"Local Ninja Origin"
+#define ENABLELOGGING_REG_KEY L"Enable Logging"
 
 // CCloudSimApp:
 // See NinjaCloudSimulator.cpp for the implementation of this class

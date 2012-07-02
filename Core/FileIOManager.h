@@ -57,7 +57,7 @@ namespace NinjaFileIO
 		virtual bool FileIsWritable(const std::wstring &filename) = 0;
 		virtual bool GetFileTimes(const std::wstring &filename, unsigned long long &createdTime, unsigned long long &modifiedTime) = 0;
         virtual bool GetFileSize(const std::wstring &filename, unsigned long long &fileSize) = 0;
-		virtual bool CreateNewFile(const std::wstring &filename);
+		virtual bool CreateNewFile(const std::wstring &filename, char *fileContents = NULL, unsigned int contentLength = 0);
 		virtual bool DeleteFile(const std::wstring &filename) = 0;
 		virtual bool SaveFile(const std::wstring &filename, char *fileContents, unsigned int contentLength); 
 		virtual bool CopyFile(const std::wstring &srcFilename, const std::wstring &destFilename, bool overwriteExistingFile) = 0;

@@ -35,7 +35,7 @@ static const char *mongooseOptionsTemplate[] =
 
     "document_root",            ".",
     "listening_ports",          "9980",
-    "num_threads",              "10",
+    "num_threads",              "30",
     "enable_directory_listing", "no",
     "enable_keep_alive",        "yes",
     "access_control_list", "-0.0.0.0/0,+127.0.0.1", // limit normal http to local host for requests handled by mongoose
@@ -536,20 +536,17 @@ bool CHttpServerWrapper::HandleFileServiceRequest(mg_connection *conn, const mg_
                 bool fileExists = m_fileMgr->FileExists(path);
                 if(fileExists == false)
                 {
-                    if(m_fileMgr->CreateNewFile(path))
+                    char *newData = NULL;
+                    int newDataLen = 0;
+                    // see if there is post data to save into the new file
+                    if(dataRead && size && bytes)
                     {
-                        // see if there is post data to save into the new file
-                        if(dataRead && size && bytes)
-                        {
-                            if(m_fileMgr->SaveFile(path, (char*)bytes, size))
-                                resp.responseStatus = responseStatus201;
-                            else
-                                resp.responseStatus = responseStatus500;
-                        }
-                        else
-                        {
-                            resp.responseStatus = responseStatus201;
-                        }
+                        newData = (char*)bytes;
+                        newDataLen = size;
+                    }
+                    if(m_fileMgr->CreateNewFile(path, newData, newDataLen))
+                    {
+                        resp.responseStatus = responseStatus201;
                     }
                     else
                     {
