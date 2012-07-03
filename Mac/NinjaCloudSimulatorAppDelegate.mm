@@ -25,4 +25,9 @@
 	return YES; // we don't want the app to remain open when our main window is closed
 }
 
+- (void)applicationWillTerminate:(NSNotification *)aNotification
+{
+    [appController PrepareForExit];
+}
+
 @end

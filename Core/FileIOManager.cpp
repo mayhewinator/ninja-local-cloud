@@ -97,7 +97,7 @@ namespace NinjaFileIO
 #else // MAC
                 NSData *data = nil;
                 if(fileContents && contentLength)
-                    NSData *data = [NSData dataWithBytes: fileContents length:contentLength];
+                    data = [NSData dataWithBytes: fileContents length:contentLength];
 
 				NSString *filePath = NinjaUtilities::WStringToNSString(filename);
 				if ([m_nsFMgr createFileAtPath:filePath contents:data attributes:nil] == YES) 

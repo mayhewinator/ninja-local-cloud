@@ -16,6 +16,7 @@ NSString *portKeyName = @"Local Cloud Port Number";
 NSString *docRootKeyName = @"Local Cloud Document Root";
 NSString *localOriginKeyName = @"Local Ninja Origin";
 NSString *limitIOKeyName = @"Limit IO to Document Root";
+NSString *loggingEnabledKeyName = @"Logging Enabled";
 
 class MacPlatformUtils : public NinjaUtilities::PlatformUtility
 {
@@ -152,10 +153,14 @@ private:
 	svrWrapper->SetPlatformUtilities(platformUtils);
 	
 	showingAdvancedOptions = NO;
+    loggingEnabled = NO;
 	
 	// set our defaults
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *appDefaults = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:YES] forKey:limitIOKeyName];
+    NSMutableDictionary *appDefaults = [NSMutableDictionary dictionary];
+    [appDefaults setObject:[NSNumber numberWithInt:YES] forKey:limitIOKeyName];
+    [appDefaults setObject:[NSNumber numberWithBool:NO] forKey:loggingEnabledKeyName];
+
     [defaults registerDefaults:appDefaults];
 	
 	return self;
@@ -173,16 +178,18 @@ private:
 
 -(void)LogMessage:(NSString*)str
 {
-	NSString *strOut = [NSString stringWithFormat:@"%@\n", str];
-	NSLog(@"%@", strOut);
+    if(loggingEnabled)
+    {
+		NSString *strOut = [NSString stringWithFormat:@"%@\n", str];
+		NSLog(@"%@", strOut);
 	
-	NSTextStorage *txtStore = [logCtrl textStorage];
-	NSRange myRange = NSMakeRange([[logCtrl textStorage] length], 0);
+		NSTextStorage *txtStore = [logCtrl textStorage];
+		NSRange myRange = NSMakeRange([[logCtrl textStorage] length], 0);
 	
-	[txtStore beginEditing];
-	[txtStore replaceCharactersInRange:myRange withString:strOut];
-	[txtStore endEditing];
-	
+		[txtStore beginEditing];
+		[txtStore replaceCharactersInRange:myRange withString:strOut];
+		[txtStore endEditing];
+	}
 }
 
 -(void)awakeFromNib
@@ -192,9 +199,11 @@ private:
 	[portNumberCtrl setEnabled:YES];
 	[rootCtrl setEnabled:YES];
 	
-	NSInteger portKeyValue = [[NSUserDefaults standardUserDefaults] integerForKey:portKeyName];
-	NSString *docRootValue = [[NSUserDefaults standardUserDefaults] stringForKey:docRootKeyName];
-	
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	NSInteger portKeyValue = [defaults integerForKey:portKeyName];
+	NSString *docRootValue = [defaults stringForKey:docRootKeyName];
+	loggingEnabled = [defaults boolForKey:loggingEnabledKeyName];
+    
 	// find an available port to use as a default value
 	if(portKeyValue == 0)
 		portKeyValue = NinjaUtilities::FindAvailablePort();
@@ -212,6 +221,7 @@ private:
 	{
 		[rootCtrl setStringValue:docRootValue];
 	}
+    [enableLoggingCtrl setState:(loggingEnabled == YES ? NSOnState : NSOffState)];
 }
 
 -(void)InitAfterWindowLoad
@@ -221,12 +231,21 @@ private:
 	[self start:nil];
 }
 
+-(void)PrepareForExit
+{
+    [self start:nil];
+    [self SaveSettings];
+}
+
 -(void)SaveSettings
 {
 	int portNum = [portNumberCtrl intValue];
 	NSString *rootPath = [[rootCtrl stringValue] stringByExpandingTildeInPath];
-	[[NSUserDefaults standardUserDefaults] setInteger:portNum forKey:portKeyName];
-	[[NSUserDefaults standardUserDefaults] setObject:rootPath forKey:docRootKeyName];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	[defaults setInteger:portNum forKey:portKeyName];
+	[defaults setObject:rootPath forKey:docRootKeyName];
+    [defaults setBool:loggingEnabled forKey:loggingEnabledKeyName];
 }
 
 -(void)UpdateURL
@@ -349,6 +368,11 @@ private:
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
 	[pb declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:self];
     [pb setString:url forType:NSStringPboardType];
+}
+
+-(IBAction)enableLogging:(id)sender
+{
+    loggingEnabled = ([enableLoggingCtrl state] == NSOnState);
 }
 
 - (void)controlTextDidChange:(NSNotification *)aNotification

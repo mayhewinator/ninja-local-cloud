@@ -25,11 +25,13 @@ namespace NinjaUtilities
 	IBOutlet NSTextField *rootCtrl;
 	IBOutlet NSTextField *urlCtrl;
 	IBOutlet NSTextView *logCtrl;
+    IBOutlet NSButton *enableLoggingCtrl;
 	IBOutlet NSButton *startBtnCtrl;
 	IBOutlet NSButton *stopBtnCtrl;
 	IBOutlet NSButton *advancedBtnCtrl;
 	
 	BOOL showingAdvancedOptions;
+    BOOL loggingEnabled;
 	
 	CHttpServerWrapper *svrWrapper;
 	NinjaFileIO::MacFileIOManager *fileMgr;
@@ -42,11 +44,13 @@ namespace NinjaUtilities
 -(IBAction)clearLog:(id)sender;
 -(IBAction)advancedOptions:(id)sender;
 -(IBAction)copyURL:(id)sender;
+-(IBAction)enableLogging:(id)sender;
 -(void)LogMessage:(NSString*)str;
 -(void)SaveSettings;
 -(void)UpdateURL;
 -(void)UpdateStatus;
 -(void)UpdateForAdvancedOptions;
 -(void)InitAfterWindowLoad;
+-(void)PrepareForExit;
 
 @end
