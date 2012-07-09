@@ -437,17 +437,25 @@ bool CHttpServerWrapper::ApproveConnectionRequest(const char *origin)
         }
         else
         {
-            // check if a secondary origin has been specified
+            // check if a secondary origin has been specified. NOTE: This can be a comma delimited list.
             std::wstring localOrigin;
             if(m_platformUtils->GetLocalNinjaOrigin(localOrigin) && localOrigin.length())
             {
+                std::vector<std::wstring> locOriginsArray;
+                NinjaUtilities::SplitWString(localOrigin, L',', locOriginsArray); 
+
                 std::string localOriginCopy;
-                NinjaUtilities::WStringToString(localOrigin, localOriginCopy);
-                if(NinjaUtilities::CompareStringsNoCase(origin, localOriginCopy.c_str()) == 0 || 
-                    (NinjaUtilities::CompareStringsNoCase("chrome-extension://*", localOriginCopy.c_str()) == 0 && strstr(origin, "chrome-extension://") != NULL) ||
-                    NinjaUtilities::CompareStringsNoCase("*", localOriginCopy.c_str()) == 0)
+                std::wstring lo;
+                for(std::vector<std::wstring>::const_iterator it = locOriginsArray.begin(); it != locOriginsArray.end(); it++)
                 {
-                    ret = true;
+                    lo = L"chrome-extension://" + (*it);
+                    NinjaUtilities::WStringToString(lo, localOriginCopy);
+
+                    if(NinjaUtilities::CompareStringsNoCase(origin, localOriginCopy.c_str()) == 0)
+                    {
+                        ret = true;
+                        break;
+                    }
                 }
             }
         }
