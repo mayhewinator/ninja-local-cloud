@@ -801,7 +801,81 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </tr>
     </tbody>
 </table>
-<p class="c11 c2"><span></span></p>
 
-<p class="c11 c2"><span></span></p></body>
+<h1 class="c2"><span>Web API</span></h1>
+<p class="c2">This API is used to request file data from a URL.</p>
+<h3 class="c2">Get text or binary data from a URL</h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>URL</span></p></td>
+        <td class="c6"><p class="c2">http://someURL.com/web?url=http://foo.com/bar.txt</p>
+        </td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Method</span></p></td>
+        <td class="c6"><p class="c2"><span>GET</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Headers</span></p></td>
+        <td class="c6"><p class="c2"><span class="c3">Required</span></p>
+            <p class="c2"><span class="c10">return-type<br></span><span>value=&rdquo;text&rdquo; or &ldquo;binary&rdquo;</span><br>default=&ldquo;text&ldquo;</p>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Request Body</span></p></td>
+        <td class="c6"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Headers</span></p></td>
+        <td class="c6"><p class="c2"><span>Cache-Control: no-cache</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Response Body</span></p></td>
+        <td class="c6"><p class="c2"><span>None</span></p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2"><span>Return Status Codes</span></p></td>
+        <td class="c6"><p class="c2"><span>200 &ldquo;OK&rdquo; &ndash; The operation succeeded<br>404 &ldquo;Not found&rdquo; &ndash;
+            the source file at the indicated URI does not exist.<br>501-&ldquo;Not Implemented&rdquo; &ndash; if any method other than GET is used</span></p></td>
+    </tr>
+    </tbody>
+</table>
+
+<h1 class="c2">Cloud Status API</h1>
+<p class="c2">This API is used to request cloud status information.</p>
+<h3 class="c2">Get the cloud status JSON</h3>
+<table cellpadding="0" cellspacing="0" class="c15">
+    <tbody>
+    <tr class="c8">
+        <td class="c5"><p class="c2">URL</p></td>
+        <td class="c6"><p class="c2">http://someURL.com/cloudstatus</p>
+        </td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2">Method</p></td>
+        <td class="c6"><p class="c2">GET</p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2">Request Headers</p></td>
+        <td class="c6"><p class="c2">None</p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2">Request Body</p></td>
+        <td class="c6"><p class="c2">None</p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2">Response Headers</p></td>
+        <td class="c6"><p class="c2">Cache-Control: no-cache</p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2">Response Body</p></td>
+        <td class="c6"><p class="c2">JSON string containg the cloud status</p></td>
+    </tr>
+    <tr class="c8">
+        <td class="c5"><p class="c2">Return Status Codes</p></td>
+        <td class="c6"><p class="c2">200 &ldquo;OK&rdquo; &ndash; The operation succeeded</p></td>
+    </tr>
+    </tbody>
+</table>
+</body>
 </html>
