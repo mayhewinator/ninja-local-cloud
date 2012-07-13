@@ -445,10 +445,16 @@ bool CHttpServerWrapper::ApproveConnectionRequest(const char *origin)
                 NinjaUtilities::SplitWString(localOrigin, L',', locOriginsArray); 
 
                 std::string localOriginCopy;
-                std::wstring lo;
+                std::wstring lo, originStr;
                 for(std::vector<std::wstring>::const_iterator it = locOriginsArray.begin(); it != locOriginsArray.end(); it++)
                 {
-                    lo = L"chrome-extension://" + (*it);
+                    originStr = (*it);
+
+                    // trim off any leading or trailing spaces
+                    originStr.erase(0, originStr.find_first_not_of(' '));
+                    originStr.erase(originStr.find_last_not_of(' ')+1);
+
+                    lo = L"chrome-extension://" + originStr;
                     NinjaUtilities::WStringToString(lo, localOriginCopy);
 
                     if(NinjaUtilities::CompareStringsNoCase(origin, localOriginCopy.c_str()) == 0)
