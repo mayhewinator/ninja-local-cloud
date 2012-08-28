@@ -699,6 +699,7 @@ namespace NinjaFileIO
                                 outBufLen = outputBufferSizes[i];
                                 memcpy_s((*fileContents) + pos, outBufLen, outBuf, outBufLen);
                                 pos += outBufLen;
+                                delete outBuf;
                             }
                             contentLength = totalBytesRead;
                             ret = true;
